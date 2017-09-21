@@ -4,20 +4,17 @@ node_js:
 env:
   global:
     - CXX=g++-4.8
-  matrix:
-    - TEST_SUITE='test'
-    - TEST_SUITE='css:test --set set1'
-    - TEST_SUITE='css:test --set set2'
-    - TEST_SUITE='css:test --set set3'
-    - TEST_SUITE='css:test --set set4'
 
 sudo: required
 dist: trusty
 group: edge
 
-services:
-  - docker
-
+notifications:
+  email:
+    - wilkenj@vmware.com
+    # - communityci@angular.io
+  slack:
+    secure: QpSneUjWu0vm/1o1Y/+Kqaoxz8GfF47lAbe9D8K9HvySvth+DSahGxOPCJQoc2I5Dfjq+v0kH0KbEPu/4KneUCyAM3dMsaKpA45txM2QJf8CmG6mvFR2I2yAVLmRdUt2lTugqG0WUifnWxIpNjrCQMb85t27NVO77ELS11et+KTtMSlbgK2QfxOj25BQX4cXwrOo/5zJ1kHjoomuOcn82XwAhcoUXpLZrGaXT7ye0TNYgKfm7KgMV9u1R9awoyUfnTx8nC43QFVsddayqFHz6ws83jSuxoLfTNQTvBvTKWsLd+9ACCVRpAKW1SE/faSYtGkJAlqSdjHWiiDbYAs33SYUTgwN32uzQzJjs3lbyjfE6k0XiyecdpAxFxqBDXWNjSivORpBVdJVnd/KVgEnvRTdqmRlCF7S+WkeDjUaW64HOVKIO4Et0oriF3v0miWro4t6HZ50qEeD4zyMXWY+IAuGoBoKEANkkKf06Pkgu8j+H1jmnMCYXfCthUZ0Fbq9gtKzjVPgwG0KWMRlhcqUrRQfZtU2+LX8H1NIRW1U2nKcFxJREADvfdbz+8vQBd6DzPXgmrx4AEDNGJ+ZYEIlQp/AdvteNwgj2wToPQTwFI/kD5eq/u5HyXKfMEQRzAFct2AoQZERm8ZFoQigICiruEuWT6viAhx0IcbQ/g7NmgA=
 addons:
   apt:
     sources:
@@ -26,9 +23,6 @@ addons:
     packages:
       - g++-4.8
       - google-chrome-stable
-  artifacts:
-    paths:
-      - $TRAVIS_BUILD_DIR/gemini-report/
 cache:
   apt: true
   yarn: true
@@ -38,10 +32,8 @@ cache:
 before_install:
 
 before_script:
-  - npm install -g gemini
-  - npm install -g html-reporter
-  - docker run -d -p 4444:4444 selenium/standalone-chrome@sha256:b899f16b6d963600ef6da8a8dd49e311146033ed66cb5af71eccb78ab378e19a
+  - npm install https://github.com/angular/{animations,common,compiler,compiler-cli,core,forms,platform-browser,platform-browser-dynamic,router}-builds
   - sleep 5
 
 script:
-  - gulp $TEST_SUITE # run unit test, css regression, and css reference in parallel
+  - gulp test
