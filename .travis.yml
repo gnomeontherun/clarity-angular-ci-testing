@@ -5,12 +5,6 @@ node_js:
 env:
   global:
     - CXX=g++-4.8
-  matrix:
-    - TEST_SUITE='test:travis'
-    - TEST_SUITE='test:visual set1'
-    - TEST_SUITE='test:visual set2'
-    - TEST_SUITE='test:visual set3'
-    - TEST_SUITE='test:visual set4'
 
 sudo: required
 dist: trusty
@@ -18,6 +12,13 @@ group: edge
 
 services:
   - docker
+
+notifications:
+  email:
+    - wilkenj@vmware.com
+    # - communityci@angular.io
+  slack:
+    secure: QpSneUjWu0vm/1o1Y/+Kqaoxz8GfF47lAbe9D8K9HvySvth+DSahGxOPCJQoc2I5Dfjq+v0kH0KbEPu/4KneUCyAM3dMsaKpA45txM2QJf8CmG6mvFR2I2yAVLmRdUt2lTugqG0WUifnWxIpNjrCQMb85t27NVO77ELS11et+KTtMSlbgK2QfxOj25BQX4cXwrOo/5zJ1kHjoomuOcn82XwAhcoUXpLZrGaXT7ye0TNYgKfm7KgMV9u1R9awoyUfnTx8nC43QFVsddayqFHz6ws83jSuxoLfTNQTvBvTKWsLd+9ACCVRpAKW1SE/faSYtGkJAlqSdjHWiiDbYAs33SYUTgwN32uzQzJjs3lbyjfE6k0XiyecdpAxFxqBDXWNjSivORpBVdJVnd/KVgEnvRTdqmRlCF7S+WkeDjUaW64HOVKIO4Et0oriF3v0miWro4t6HZ50qEeD4zyMXWY+IAuGoBoKEANkkKf06Pkgu8j+H1jmnMCYXfCthUZ0Fbq9gtKzjVPgwG0KWMRlhcqUrRQfZtU2+LX8H1NIRW1U2nKcFxJREADvfdbz+8vQBd6DzPXgmrx4AEDNGJ+ZYEIlQp/AdvteNwgj2wToPQTwFI/kD5eq/u5HyXKfMEQRzAFct2AoQZERm8ZFoQigICiruEuWT6viAhx0IcbQ/g7NmgA=
 
 addons:
   apt:
@@ -27,19 +28,12 @@ addons:
     packages:
       - g++-4.8
       - google-chrome-stable
-  artifacts:
-    paths:
-      - "$TRAVIS_BUILD_DIR/reports/"
-
-cache:
-  apt: true
-  directories:
-    - node_modules
-
-before_install:
 
 before_script:
-  - npm install -g gemini@5.2.0 html-reporter@2.0.1
+  - git remote add upstream https://github.com/vmware/clarity.git
+  - git pull upstream master
+  - npm install --no-save
+  - npm install https://github.com/angular/{animations,common,compiler,cli,compiler-cli,core,forms,platform-browser,platform-browser-dynamic,router,language-service}-builds https://github.com/angular/angular-devkit-{build-angular,build-ng-packagr,build-optimizer,core}-builds --no-save
 
 script:
-  - npm run $TEST_SUITE # run unit test and css regression test sets in parallel
+  - npm run test:travis # run unit test and css regression test sets in parallel
